@@ -103,6 +103,7 @@
   </v-row>
 </template>
 <script>
+import { db } from '@/main';
 export default {
     data: ()=>({
         today: new Date().toISOString().substr(0,10),
@@ -117,7 +118,32 @@ export default {
         details: null,
         start: null,
         end: null,
-        color: ""
-    })
+        color: "1976d2",
+        currentlyEditing: null,
+        selectedEvent: {},
+        selectedElement: null,
+        selectedOpen: false,
+        events: [],
+        dialog: false
+    }),
+    mounted(){
+        this.getEvents();
+    },
+    methods: {
+        async getEvents(){
+            let snapshot = await db.collection('calEvent').get();
+            let events = [];
+            snapshot.forEach(doc =>{
+                let appData = doc.data();
+                appData.id = doc.id;
+                events.push(appData);
+//                console.log(doc.data());
+            });
+            this.events = events;
+        },
+        getEventColor(ev){
+            return ev.color;
+        }
+    }
 };
 </script>
